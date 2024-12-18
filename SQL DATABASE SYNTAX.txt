@@ -1,3 +1,4 @@
+DATABASE NAME : vms_db
 CREATE TABLE beds (
   bed_id int(11) NOT NULL,
   bed_type enum('ICU','General','Private','Emergency') NOT NULL,
