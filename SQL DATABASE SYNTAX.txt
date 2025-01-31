@@ -1,147 +1,227 @@
-DATABASE NAME : vms_db
-CREATE TABLE beds (
-  bed_id int(11) NOT NULL,
-  bed_type enum('ICU','General','Private','Emergency') NOT NULL,
-  bed_count int(11) DEFAULT 0,
-  hospital_id int(11) DEFAULT NULL,
-  created_at timestamp NOT NULL DEFAULT current_timestamp(),
-  updated_at timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+SET FOREIGN_KEY_CHECKS=0;
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+CREATE DATABASE IF NOT EXISTS `vms_db` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `vms_db`;
+
+CREATE TABLE `beds` (
+  `bed_id` int(11) NOT NULL,
+  `bed_type` enum('ICU','General','Private','Emergency') NOT NULL,
+  `bed_count` int(11) DEFAULT 0,
+  `hospital_id` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE hospitals (
-  hospital_id int(11) NOT NULL,
-  hospital_name varchar(255) NOT NULL,
-  address text DEFAULT NULL,
-  contact_number varchar(15) DEFAULT NULL,
-  email varchar(255) DEFAULT NULL,
-  admin_id int(11) DEFAULT NULL,
-  status enum('active','inactive') DEFAULT 'active',
-  created_at timestamp NOT NULL DEFAULT current_timestamp(),
-  updated_at timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+CREATE TABLE `hospitals` (
+  `hospital_id` int(11) NOT NULL,
+  `hospital_name` varchar(255) NOT NULL,
+  `address` text DEFAULT NULL,
+  `contact_number` varchar(15) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `admin_id` int(11) DEFAULT NULL,
+  `status` enum('active','inactive') DEFAULT 'active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE notifications (
-  notification_id int(11) NOT NULL,
-  user_id int(11) DEFAULT NULL,
-  message text NOT NULL,
-  status enum('unread','read') DEFAULT 'unread',
-  created_at timestamp NOT NULL DEFAULT current_timestamp()
+CREATE TABLE `invoices` (
+  `id` int(11) NOT NULL,
+  `invoice_number` varchar(50) NOT NULL,
+  `patient_id` varchar(50) NOT NULL,
+  `patient_name` varchar(255) NOT NULL,
+  `total_amount` decimal(10,2) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `status` enum('Paid','Unpaid') NOT NULL DEFAULT 'Unpaid'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE reports (
-  report_id int(11) NOT NULL,
-  report_name varchar(255) NOT NULL,
-  report_data text DEFAULT NULL,
-  generated_at timestamp NOT NULL DEFAULT current_timestamp()
+CREATE TABLE `notifications` (
+  `notification_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `message` text NOT NULL,
+  `status` enum('unread','read') DEFAULT 'unread',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE requests (
-  request_id int(11) NOT NULL,
-  user_id int(11) DEFAULT NULL,
-  hospital_id int(11) DEFAULT NULL,
-  vaccine_id int(11) DEFAULT NULL,
-  bed_id int(11) DEFAULT NULL,
-  status enum('pending','approved','rejected') DEFAULT 'pending',
-  request_type enum('vaccine','bed') NOT NULL,
-  requested_at timestamp NOT NULL DEFAULT current_timestamp(),
-  approved_at timestamp NULL DEFAULT NULL,
-  rejected_at timestamp NULL DEFAULT NULL
+CREATE TABLE `reports` (
+  `report_id` int(11) NOT NULL,
+  `report_name` varchar(255) NOT NULL,
+  `report_data` text DEFAULT NULL,
+  `generated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE users (
-  user_id int(11) NOT NULL,
-  username varchar(255) NOT NULL,
-  password varchar(255) NOT NULL,
-  role enum('admin','hospital','patient') NOT NULL,
-  full_name varchar(255) DEFAULT NULL,
-  email varchar(255) DEFAULT NULL,
-  phone varchar(15) DEFAULT NULL,
-  address text DEFAULT NULL,
-  status enum('active','inactive') DEFAULT 'active',
-  created_at timestamp NOT NULL DEFAULT current_timestamp(),
-  updated_at timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+CREATE TABLE `requests` (
+  `request_id` int(11) NOT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `hospital_id` int(11) DEFAULT NULL,
+  `vaccine_id` int(11) DEFAULT NULL,
+  `bed_id` int(11) DEFAULT NULL,
+  `status` enum('pending','approved','rejected') DEFAULT 'pending',
+  `request_type` enum('vaccine','bed') NOT NULL,
+  `requested_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `approved_at` timestamp NULL DEFAULT NULL,
+  `rejected_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-CREATE TABLE vaccines (
-  vaccine_id int(11) NOT NULL,
-  vaccine_name varchar(255) NOT NULL,
-  vaccine_type varchar(100) DEFAULT NULL,
-  stock_count int(11) DEFAULT 0,
-  hospital_id int(11) DEFAULT NULL,
-  created_at timestamp NOT NULL DEFAULT current_timestamp(),
-  updated_at timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+CREATE TABLE `users` (
+  `user_id` int(11) NOT NULL,
+  `username` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `role` enum('admin','hospital','patient') NOT NULL,
+  `full_name` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `phone` varchar(15) DEFAULT NULL,
+  `address` text DEFAULT NULL,
+  `status` enum('active','inactive') DEFAULT 'active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+CREATE TABLE `vaccination_records` (
+  `id` int(11) NOT NULL,
+  `person_name` varchar(255) NOT NULL,
+  `vaccine` varchar(255) NOT NULL,
+  `date` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-ALTER TABLE beds
-  ADD PRIMARY KEY (bed_id),
-  ADD KEY hospital_id (hospital_id);
+INSERT INTO `vaccination_records` (`id`, `person_name`, `vaccine`, `date`) VALUES
+(4, 'John Doe', 'COVID-19 Vaccine', '2024-12-15'),
+(12, 'Michael Johnson', 'Hepatitis B Vaccine', '2024-12-17'),
+(17, 'Jane Smith', 'Flu Vaccine', '2024-12-16'),
+(22, 'rafay', 'Flu Vaccine', '2022-05-25'),
+(26, 'mahdi raza ', 'Hepatitis B Vaccine', '2059-04-05'),
+(27, 'John Doe', 'COVID-19 Vaccine', '2024-12-15'),
+(28, 'Jane Smith', 'Flu Vaccine', '2024-12-16'),
+(29, 'Michael Johnson', 'Hepatitis B Vaccine', '2024-12-17'),
+(30, 'mahdi raza ', 'Hepatitis B Vaccine', '2059-04-05'),
+(31, 'John Doe', 'COVID-19 Vaccine', '2024-12-15'),
+(32, 'Jane Smith', 'Flu Vaccine', '2024-12-16'),
+(37, 'mahdi raza ', 'Hepatitis B Vaccine', '2059-04-05'),
+(38, 'RAFAY', 'COVID-19 Vaccine', '2025-02-12'),
+(39, 'RAFAY', 'COVID-19 Vaccine', '2025-02-12'),
+(40, 'RAFAY', 'COVID-19 Vaccine', '2025-02-12'),
+(41, 'RAFAY', 'COVID-19 Vaccine', '2025-02-12'),
+(42, 'RAFAY', 'COVID-19 Vaccine', '2025-02-12'),
+(43, 'RAFAY', 'Hepatitis B Vaccine', '2025-05-05');
 
-ALTER TABLE hospitals
-  ADD PRIMARY KEY (hospital_id),
-  ADD UNIQUE KEY email (email),
-  ADD KEY admin_id (admin_id);
+CREATE TABLE `vaccines` (
+  `vaccine_id` int(11) NOT NULL,
+  `vaccine_name` varchar(255) NOT NULL,
+  `vaccine_type` varchar(100) DEFAULT NULL,
+  `stock_count` int(11) DEFAULT 0,
+  `hospital_id` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `quantity` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-ALTER TABLE notifications
-  ADD PRIMARY KEY (notification_id),
-  ADD KEY user_id (user_id);
+INSERT INTO `vaccines` (`vaccine_id`, `vaccine_name`, `vaccine_type`, `stock_count`, `hospital_id`, `created_at`, `updated_at`, `quantity`) VALUES
+(1, 'COVID-19 Vaccine', NULL, 0, NULL, '2024-12-20 16:13:22', '2025-01-29 07:36:47', 95),
+(2, 'Flu Vaccine', NULL, 0, NULL, '2024-12-20 16:13:22', '2024-12-20 16:13:22', 150),
+(3, 'Hepatitis B Vaccine', NULL, 0, NULL, '2024-12-20 16:13:22', '2025-01-29 07:37:08', 74);
 
-ALTER TABLE reports
-  ADD PRIMARY KEY (report_id);
+CREATE TABLE `vaccine_requests` (
+  `id` int(11) NOT NULL,
+  `requester_name` varchar(255) NOT NULL,
+  `vaccine_name` varchar(255) NOT NULL,
+  `quantity` int(11) NOT NULL,
+  `request_date` date NOT NULL,
+  `status` enum('Pending','Approved','Rejected') DEFAULT 'Pending'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-ALTER TABLE requests
-  ADD PRIMARY KEY (request_id),
-  ADD KEY user_id (user_id),
-  ADD KEY hospital_id (hospital_id),
-  ADD KEY vaccine_id (vaccine_id),
-  ADD KEY bed_id (bed_id);
-
-ALTER TABLE users
-  ADD PRIMARY KEY (user_id),
-  ADD UNIQUE KEY username (username),
-  ADD UNIQUE KEY email (email);
-
-ALTER TABLE vaccines
-  ADD PRIMARY KEY (vaccine_id),
-  ADD KEY hospital_id (hospital_id);
-
-
-ALTER TABLE beds
-  MODIFY bed_id int(11) NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE hospitals
-  MODIFY hospital_id int(11) NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE notifications
-  MODIFY notification_id int(11) NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE reports
-  MODIFY report_id int(11) NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE requests
-  MODIFY request_id int(11) NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE users
-  MODIFY user_id int(11) NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE vaccines
-  MODIFY vaccine_id int(11) NOT NULL AUTO_INCREMENT;
+INSERT INTO `vaccine_requests` (`id`, `requester_name`, `vaccine_name`, `quantity`, `request_date`, `status`) VALUES
+(1, 'DOW', 'Hepatitis B Vaccine', 35, '2024-05-01', 'Rejected');
 
 
-ALTER TABLE beds
-  ADD CONSTRAINT beds_ibfk_1 FOREIGN KEY (hospital_id) REFERENCES hospitals (hospital_id);
+ALTER TABLE `beds`
+  ADD PRIMARY KEY (`bed_id`),
+  ADD KEY `hospital_id` (`hospital_id`);
 
-ALTER TABLE hospitals
-  ADD CONSTRAINT hospitals_ibfk_1 FOREIGN KEY (admin_id) REFERENCES `users` (user_id);
+ALTER TABLE `hospitals`
+  ADD PRIMARY KEY (`hospital_id`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `admin_id` (`admin_id`);
 
-ALTER TABLE notifications
-  ADD CONSTRAINT notifications_ibfk_1 FOREIGN KEY (user_id) REFERENCES `users` (user_id);
+ALTER TABLE `invoices`
+  ADD PRIMARY KEY (`id`);
 
-ALTER TABLE requests
-  ADD CONSTRAINT requests_ibfk_1 FOREIGN KEY (user_id) REFERENCES `users` (user_id),
-  ADD CONSTRAINT requests_ibfk_2 FOREIGN KEY (hospital_id) REFERENCES hospitals (hospital_id),
-  ADD CONSTRAINT requests_ibfk_3 FOREIGN KEY (vaccine_id) REFERENCES vaccines (vaccine_id),
-  ADD CONSTRAINT requests_ibfk_4 FOREIGN KEY (bed_id) REFERENCES beds (bed_id);
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`notification_id`),
+  ADD KEY `user_id` (`user_id`);
 
-ALTER TABLE vaccines
-  ADD CONSTRAINT vaccines_ibfk_1 FOREIGN KEY (hospital_id) REFERENCES hospitals (hospital_id);
+ALTER TABLE `reports`
+  ADD PRIMARY KEY (`report_id`);
+
+ALTER TABLE `requests`
+  ADD PRIMARY KEY (`request_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `hospital_id` (`hospital_id`),
+  ADD KEY `vaccine_id` (`vaccine_id`),
+  ADD KEY `bed_id` (`bed_id`);
+
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`user_id`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `email` (`email`);
+
+ALTER TABLE `vaccination_records`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `vaccines`
+  ADD PRIMARY KEY (`vaccine_id`),
+  ADD KEY `hospital_id` (`hospital_id`);
+
+ALTER TABLE `vaccine_requests`
+  ADD PRIMARY KEY (`id`);
+
+
+ALTER TABLE `beds`
+  MODIFY `bed_id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `hospitals`
+  MODIFY `hospital_id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `invoices`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `notifications`
+  MODIFY `notification_id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `reports`
+  MODIFY `report_id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `requests`
+  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `users`
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `vaccination_records`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=44;
+
+ALTER TABLE `vaccines`
+  MODIFY `vaccine_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+ALTER TABLE `vaccine_requests`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+
+ALTER TABLE `beds`
+  ADD CONSTRAINT `beds_ibfk_1` FOREIGN KEY (`hospital_id`) REFERENCES `hospitals` (`hospital_id`);
+
+ALTER TABLE `hospitals`
+  ADD CONSTRAINT `hospitals_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `users` (`user_id`);
+
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
+
+ALTER TABLE `requests`
+  ADD CONSTRAINT `requests_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+  ADD CONSTRAINT `requests_ibfk_2` FOREIGN KEY (`hospital_id`) REFERENCES `hospitals` (`hospital_id`),
+  ADD CONSTRAINT `requests_ibfk_3` FOREIGN KEY (`vaccine_id`) REFERENCES `vaccines` (`vaccine_id`),
+  ADD CONSTRAINT `requests_ibfk_4` FOREIGN KEY (`bed_id`) REFERENCES `beds` (`bed_id`);
+
+ALTER TABLE `vaccines`
+  ADD CONSTRAINT `vaccines_ibfk_1` FOREIGN KEY (`hospital_id`) REFERENCES `hospitals` (`hospital_id`);
+SET FOREIGN_KEY_CHECKS=1;
+COMMIT;
